@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------------
 # README
 # Text::FixedLength
-# Version 0.11
+# Version 0.12
 # Dion Almaer (dion@member.com)
-# Mon Nov 16 18:26:35 CST 1998
+# Wed Nov 18 16:55:46 CST 1998
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
@@ -29,4 +29,13 @@ To build and test this distribution, type:
 If the tests pass, install it:
 
   make install
+# ----------------------------------------------------------------------------
+# CHANGES
+# ----------------------------------------------------------------------------
+0.12: Added setCrop( 1 | 0 ) to force the fixed field format:
+      setCrop sets whether records should be cropped to the size of the format
+      or not.
+      For example if you have a string 'whee' that is meant to be fit into
+      a fixed format of 2 then if setCrop is true the record will be changed
+      to 'wh' to constrain it
 # ----------------------------------------------------------------------------

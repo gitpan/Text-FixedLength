@@ -3,8 +3,8 @@
 # Auth: Dion Almaer (dion)
 # Desc: Manipulate fixed length fields, from creating to parsing
 # Date Created: Sun Nov 15 17:50:29 1998
-# Version: 0.11
-# $Modified: Mon Nov 16 18:26:35 CST 1998 by dion $
+# Version: 0.12
+# $Modified: Wed Nov 18 16:55:46 CST 1998 by dion $
 # ----------------------------------------------------------------------------
 package Text::FixedLength;
 use strict;
@@ -14,9 +14,10 @@ use Exporter;
 #              Package Variables
 # ----------------------------------------------------------------------------
 @Text::FixedLength::ISA     = qw(Exporter);
-@Text::FixedLength::EXPORT  = qw(delim2fixed fixed2delim setJustify);
-$Text::FixedLength::VERSION = '0.11';
+@Text::FixedLength::EXPORT  = qw(delim2fixed fixed2delim setJustify setCrop);
+$Text::FixedLength::VERSION = '0.12';
 my $defaultJustification    = 'L'; # -- left justified by default (setJustify)
+my $cropRecords             = 1;   # -- force fixed format by cropping records
 
 # ----------------------------------------------------------------------------
 #              Module Subroutines
@@ -29,6 +30,7 @@ my $defaultJustification    = 'L'; # -- left justified by default (setJustify)
 # ----------------------------------------------------------------------------
 # Subroutine: delim2fixed - given an array of delimited text, or file with
 #                           delimited text, create an array of fixed text
+# SEE THE POD DOCUMENTATION BELOW (perldoc Text::FixedLength)
 # ----------------------------------------------------------------------------
 sub delim2fixed {
   my $delimData = shift || die 'delim2fixed: need data'; 
@@ -57,7 +59,11 @@ sub getFixed {
   my $out    = '';
   die "getFixed: no delimiter in $s" unless $s =~ /$delim/;
 
+  # -- get each piece
+  my @records = split /$delim/, $s;
+
   # -- setup the sprintf format (e.g. "%-8s%3s...")
+  my $count = 0;
   foreach ( @$format ) {
     my $f = $_; # -- copy the format as we chop it later
     my $just = ($defaultJustification eq 'L') ? '-' : '';
@@ -66,8 +72,15 @@ sub getFixed {
       if ( $c eq 'L' ) { $just = '-'; } elsif ( $c eq 'R' ) { $just = ''; }
     }
     $out .= "%${just}${f}s";
+
+    # -- Crop the record if it is longer than it is meant to be
+    if ($cropRecords) {
+        $records[$count] = substr($records[$count], 0, $f) 
+          if length $records[$count] > $f;
+    }
+    $count++;
   }
-  return sprintf $out, split /$delim/, $s;
+  return sprintf $out, @records;
 }
 
 # ----------------------------------------------------------------------------
@@ -75,7 +88,8 @@ sub getFixed {
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
-# Subroutine: fixed2delim - 
+# Subroutine: fixed2delim
+# SEE THE POD DOCUMENTATION BELOW (perldoc Text::FixedLength)
 # ----------------------------------------------------------------------------
 sub fixed2delim {
   my $fixedData   = shift || die 'fixed2delim: need data';
@@ -125,6 +139,15 @@ sub setJustify {
   my $char = uc shift;
   die 'setJustify: need one of: l, L, r, R' unless $char =~ /[LR]/;
   $defaultJustification = $char;
+}
+
+# ----------------------------------------------------------------------------
+# Subroutine: setCrop - set the cropRecords value (whether to force the fixed
+#             format by constraining a string to the size of its format)
+# ----------------------------------------------------------------------------
+sub setCrop {
+  my $arg = shift; die 'setCrop: need either 1 or 0' unless defined $arg;
+  $cropRecords = ($arg) ? 1 : 0;
 }
 
 # ----------------------------------------------------------------------------
@@ -246,11 +269,20 @@ o B<fixed2delim>($filename | $dataAREF, $formatAREF, $delim, [$outfilename])
         You do not need to worry about the justification of the
         text as the whitespace is cleaned 
 
-o B<setJustify>($justchar) [either 'L' or 'R']
+o B<setJustify>($justchar) [either 'L' or 'R'] [default: L]
 
   setJustify sets the default justification (originally set to left).
   
   ARGUMENTS: either L for left justified, or R for right justified
+
+o B<setCrop>($bool) [either 1 or 0] [default: 1]
+
+  setCrop sets whether records should be cropped to the size of the format
+  or not.
+
+  For example if you have a string 'whee' that is meant to be fit into
+  a fixed format of 2 then if setCrop is true the record will be changed
+  to 'wh' to constrain it
 
 =cut
 
