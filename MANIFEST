@@ -1,0 +1,7 @@
+# Mon Nov 16 18:26:35 CST 1998
+COPYING          - Holds the copyright info
+FixedLength.pm   - The perl module itself
+Makefile.PL      - Makefile builder
+README 		 - README info
+t/getdelim.t     - Test for getting delimited records from fixed
+t/getfixed.t     - Test for getting fixed records from delimited

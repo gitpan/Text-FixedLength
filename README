@@ -1,0 +1,32 @@
+# ----------------------------------------------------------------------------
+# README
+# Text::FixedLength
+# Version 0.11
+# Dion Almaer (dion@member.com)
+# Mon Nov 16 18:26:35 CST 1998
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
+# ABOUT
+# ----------------------------------------------------------------------------
+Manipulates fixed length fields. You can create, and parse fixed length
+fields, write out files, and read in files to convert
+To see more, type: perldoc Text::FixedLength
+
+# ----------------------------------------------------------------------------
+# COMPATIBILITY
+# ----------------------------------------------------------------------------
+This module is pure Perl. It should work with any Perl5
+
+# ----------------------------------------------------------------------------
+# INSTALL
+# ----------------------------------------------------------------------------
+To build and test this distribution, type:
+
+  perl Makefile.PL
+  make test
+
+If the tests pass, install it:
+
+  make install
+# ----------------------------------------------------------------------------
